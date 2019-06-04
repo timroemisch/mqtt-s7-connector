@@ -1,0 +1,15 @@
+{
+  "name": "s7-mqtt-connector",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mqtt": "^3.0.0",
+    "nodes7": "^0.3.3"
+  }
+}
