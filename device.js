@@ -1,27 +1,90 @@
+let attribute = require("./attribute.js");
+let sf = require('./service_functions.js');
 
-class device {
-  constructor(plc, mqtt, config) {
-    this.plc_handler = plc;
-    this.mqtt_handler = mqtt;
+module.exports = class device {
+	constructor(plc, mqtt, config) {
+		this.plc_handler = plc;
+		this.mqtt_handler = mqtt;
 
-    this.name = config.name;
-    this.config = config;
+		this.name = config.name || "unnamed device";
+		this.config = config;
 
-    this.attributes = [];
-    this.mqtt_base = "";
-  }
+		this.discovery_topic = "homeassistant";
+		this.discovery_retain = false;
+		this.type = config.type.toLowerCase();
 
+		// device topics
+		this.mqtt_name = config.mqtt;
+		this.full_mqtt_topic = config.mqtt_base + "/" + this.mqtt_name;
 
-  send_discover_msg() {
+		// store all attribute objects in this array
+		this.attributes = [];
+	}
 
-  }
+	create_attribute(config, required_type, name) {
+		// create attribute object
+		let new_attribute = new attribute(name, required_type, this.full_mqtt_topic);
+		let plc_address = "";
 
-  rec_s7_data(data) {
+		// the config could be an object
+		// or simply an string
+		if (typeof config == "object") {
+			plc_address = config.plc;
 
-  }
+			if (config.rw)
+				new_attribute.set_RW(config.rw);
 
-  rec_mqtt_data(data) {
+			if (config.update_interval)
+				new_attribute.update_interval = config.update_interval;
 
-  }
+		} else {
+			plc_address = config;
+		}
+
+		// split the plc adress to get the type
+		let offset = plc_address.split(',');
+		let params = offset[1].match(/(\d+|\D+)/g);
+		let type = params[0];
+
+		// check if the type is correct
+		// and if it isnt then print some infos
+		if (type != required_type) {
+			sf.debug("Wrong datatype '" + type + "' at attribute '" + name + "'");
+
+			let numbers = "";
+			for (var i = 1; i < params.length; i++) {
+				numbers += params[i];
+			}
+
+			sf.debug("Did you mean " + offset[0] + "," +
+				required_type + numbers +
+				" instead of " + plc_address + " ?");
+
+			return;
+		}
+
+		sf.debug("New attribute '" + new_attribute.full_mqtt_topic + "' was created");
+
+		// save attribute in array
+		this.attributes[name] = new_attribute;
+	}
+
+	send_discover_msg(info) {
+		// create an topic in which the discovery message can be sent
+		let topic = this.discovery_topic + "/" +
+			this.type + "/s7-connector/" + this.mqtt_name + "/config";
+
+		this.mqtt_handler.publish(topic, JSON.stringify(info), {
+			retain: this.discovery_retain
+		});
+	}
+
+	rec_s7_data(data) {
+
+	}
+
+	rec_mqtt_data(data) {
+
+	}
 
 }

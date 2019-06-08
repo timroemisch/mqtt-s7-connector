@@ -1,0 +1,63 @@
+{
+  "debug_level": 2,
+
+  "update_time": 10000,
+  "temperature_interval": 900000,
+
+  "mqtt_base": "s7",
+  "retain_messages": true,
+
+  "discovery_prefix": "homeassistant",
+  "discovery_retain": false,
+
+  "plc": {
+    "port": 102,
+    "host": "192.168.0.1",
+    "rack": 0,
+    "slot": 2,
+    "debug": false
+  },
+
+  "mqtt": {
+    "host": "mqtts://host.com:1234",
+    "user": "u",
+    "password": "p",
+    "rejectUnauthorized": true
+  },
+
+  "devices": [{
+      "name": "Licht",
+      "type": "light",
+
+      "state": "DB56,X150.0",
+      "brightness": "DB56,BYTE151"
+
+    },
+    {
+      "name": "Licht 1",
+      "type": "light",
+
+      "state": "DB56,X150.0"
+    },
+    {
+      "name": "Licht",
+      "type": "light",
+
+      "state": {
+        "plc": "DB56,X150.0",
+        "rw": "r",
+        "update_interval": 5000
+      }
+    },
+    {
+      "type": "light",
+      "state": "DB56,X150.0"
+    },
+    {
+      "type": "light",
+      "state": "DB56,X150.0",
+      "mqtt": "home/light2"
+    }
+  ]
+
+}
