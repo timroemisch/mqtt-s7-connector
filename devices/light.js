@@ -27,13 +27,23 @@ module.exports = class devLight extends device {
 		};
 
 		if (this.attributes["state"]) {
-			info.command_topic = this.attributes["state"].full_mqtt_topic + "/set";
-			info.state_topic = this.attributes["state"].full_mqtt_topic;
+			// add only command_topic if the attribute is allowed to write
+			if (this.attributes["state"].write_to_s7)
+				info.command_topic = this.attributes["state"].full_mqtt_topic + "/set";
+
+			// add only state_topic if attribute is allowed to read
+			if (this.attributes["state"].publish_to_mqtt)
+				info.state_topic = this.attributes["state"].full_mqtt_topic;
 		}
 
 		if (this.attributes["brightness"]) {
-			info.brightness_command_topic = this.attributes["brightness"].full_mqtt_topic + "/set";
-			info.brightness_state_topic = this.attributes["brightness"].full_mqtt_topic;
+			// add only brightness_command_topic if the attribute is allowed to write
+			if (this.attributes["brightness"].write_to_s7)
+				info.brightness_command_topic = this.attributes["brightness"].full_mqtt_topic + "/set";
+
+			// add only brightness_state_topic if attribute is allowed to read
+			if (this.attributes["brightness"].publish_to_mqtt)
+				info.brightness_state_topic = this.attributes["brightness"].full_mqtt_topic;
 		}
 
 		super.send_discover_msg(info);

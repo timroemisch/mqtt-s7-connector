@@ -23,7 +23,13 @@ module.exports = class device {
 
 	create_attribute(config, required_type, name) {
 		// create attribute object
-		let new_attribute = new attribute(name, required_type, this.full_mqtt_topic);
+		let new_attribute = new attribute(
+			this.plc_handler,
+			this.mqtt_handler,
+			name,
+			required_type,
+			this.full_mqtt_topic);
+
 		let plc_address = "";
 
 		// the config could be an object
@@ -40,6 +46,8 @@ module.exports = class device {
 		} else {
 			plc_address = config;
 		}
+
+		new_attribute.plc_address = plc_address;
 
 		// split the plc adress to get the type
 		let offset = plc_address.split(',');
@@ -63,7 +71,7 @@ module.exports = class device {
 			return;
 		}
 
-		sf.debug("New attribute '" + new_attribute.full_mqtt_topic + "' was created");
+		sf.debug("- New attribute '" + new_attribute.full_mqtt_topic + "' was created");
 
 		// save attribute in array
 		this.attributes[name] = new_attribute;
@@ -79,12 +87,30 @@ module.exports = class device {
 		});
 	}
 
-	rec_s7_data(data) {
+	rec_s7_data(attr, data) {
+		// check if attribute with this name exists
+		if (this.attributes[attr]) {
 
+			// forward all data to attribute
+			this.attributes[attr].rec_s7_data(data);
+		}
 	}
 
-	rec_mqtt_data(data) {
+	rec_mqtt_data(attr, data) {
+		// check if attribute with this name exists
+		if (this.attributes[attr]) {
 
+			// forward all data to attribute
+			this.attributes[attr].rec_mqtt_data(data);
+		}
+	}
+
+	get_plc_address(attr) {
+		if (this.attributes[attr]) {
+			return this.attributes[attr].plc_address;
+		}
+
+		return null;
 	}
 
 }

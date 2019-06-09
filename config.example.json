@@ -56,7 +56,7 @@
     {
       "type": "light",
       "state": "DB56,X150.0",
-      "mqtt": "home/light2"
+      "mqtt": "light2"
     }
   ]
 
