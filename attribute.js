@@ -10,6 +10,7 @@ module.exports = class attribute {
 		this.update_interval = 0;
 
 		this.plc_address = null;
+		this.plc_set_address = null;
 
 		// if true, the attribute is allowed to publish update msg to mqtt
 		this.publish_to_mqtt = true;
@@ -18,7 +19,11 @@ module.exports = class attribute {
 		// and allowed to subscribe to the '/set' topic
 		this.write_to_s7 = true;
 
-		this.type = type; // plc type e.g. X, BYTE
+		// only true if this attribute shouldnt be visible over mqtt
+		this.is_internal = false;
+
+		// plc type e.g. X, BYTE
+		this.type = type;
 
 		// attribute name (last part in topic)
 		this.name = name;
@@ -32,9 +37,17 @@ module.exports = class attribute {
 			sf.debug("-- Subscribe to topic: '" + this.full_mqtt_topic + "/set'");
 		}
 
-		// every attribute as to add it self to the plc_handler
-		// so that it can be updated from the plc
-		this.plc_handler.addItems(this.full_mqtt_topic);
+		this.subscribePlcUpdates();
+	}
+
+	// every attribute as to add it self to the plc_handler
+	// so that it can be updated from the plc
+	subscribePlcUpdates() {
+		if (this.plc_address)
+			this.plc_handler.addItems(this.full_mqtt_topic);
+
+		if (this.plc_set_address)
+			this.plc_handler.addItems(this.full_mqtt_topic + "/set");
 	}
 
 	set_RW(data) {
@@ -47,17 +60,29 @@ module.exports = class attribute {
 			case "r":
 				this.write_to_s7 = false;
 				this.publish_to_mqtt = true;
+				this.is_internal = false;
+
+				// unsubscribe if already subscribed
+				sf.debug("-- Unubscribe from topic: '" + this.full_mqtt_topic + "/set'");
+				this.mqtt_handler.unsubscribe(this.full_mqtt_topic + "/set");
 				break;
 
 			case "w":
 				this.write_to_s7 = true;
 				this.publish_to_mqtt = false;
+				this.is_internal = false;
 				break;
+
+			case "i":
+				this.write_to_s7 = true;
+				this.publish_to_mqtt = false;
+				this.is_internal = true;
 
 			case "rw":
 			case "wr":
 				this.write_to_s7 = true;
 				this.publish_to_mqtt = true;
+				this.is_internal = false;
 				break;
 
 			default:
@@ -68,26 +93,30 @@ module.exports = class attribute {
 
 
 	rec_s7_data(data) {
-		const now = Date.now();
+		if (this.publish_to_mqtt) {
 
-		// if time has passed then updated if the update_interval is set
-		let should_update = ((now - this.last_update) > this.update_interval) && this.update_interval != 0;
+			const now = Date.now();
 
-		// last_value / last_update update
-		if (data != this.last_value && this.update_interval == 0) {
+			// if time has passed then updated if the update_interval is set
+			let should_update = ((now - this.last_update) > this.update_interval) &&
+				this.update_interval != 0;
+
+			// last_value / last_update update
+			if (data != this.last_value && this.update_interval == 0) {
 				should_update = true;
+			}
+
+			// send mqtt msg if necessary
+			if (should_update) {
+				this.last_value = data;
+				this.last_update = now;
+
+				this.mqtt_handler.publish(this.full_mqtt_topic, data.toString(), {
+					retain: false
+				});
+			}
+
 		}
-
-		// send mqtt msg if necessary
-		if (should_update) {
-			this.last_value = data;
-			this.last_update = now;
-
-			this.mqtt_handler.publish(this.full_mqtt_topic, data.toString(), {
-				retain: false
-			});
-		}
-
 	}
 
 	rec_mqtt_data(data) {

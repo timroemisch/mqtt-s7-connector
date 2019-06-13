@@ -30,24 +30,33 @@ module.exports = class device {
 			required_type,
 			this.full_mqtt_topic);
 
-		let plc_address = "";
-
 		// the config could be an object
 		// or simply an string
 		if (typeof config == "object") {
-			plc_address = config.plc;
+			new_attribute.plc_address = config.plc;
 
+			// optional different set address
+			if (config.set_plc)
+				new_attribute.plc_set_address = config.set_plc;
+
+			// optional Read Write config
 			if (config.rw)
 				new_attribute.set_RW(config.rw);
 
+			// optional update_interval
 			if (config.update_interval)
 				new_attribute.update_interval = config.update_interval;
+
+			// optional unit_of_measurement only for homeassistant
+			if (config.unit_of_measurement)
+				new_attribute.unit_of_measurement = config.unit_of_measurement;
 
 		} else {
 			plc_address = config;
 		}
 
-		new_attribute.plc_address = plc_address;
+		// register the attribute to the plc library
+		new_attribute.subscribePlcUpdates();
 
 		// split the plc adress to get the type
 		let offset = plc_address.split(',');
@@ -56,7 +65,7 @@ module.exports = class device {
 
 		// check if the type is correct
 		// and if it isnt then print some infos
-		if (type != required_type) {
+		if (required_type != "" && type != required_type) {
 			sf.debug("Wrong datatype '" + type + "' at attribute '" + name + "'");
 
 			let numbers = "";
@@ -96,18 +105,25 @@ module.exports = class device {
 		}
 	}
 
-	rec_mqtt_data(attr, data) {
+	rec_mqtt_data(attr, data, cb) {
 		// check if attribute with this name exists
 		if (this.attributes[attr]) {
 
 			// forward all data to attribute
 			this.attributes[attr].rec_mqtt_data(data);
+
+			if (cb) cb(attr, data);
 		}
 	}
 
 	get_plc_address(attr) {
 		if (this.attributes[attr]) {
 			return this.attributes[attr].plc_address;
+		}
+
+		// optional set address
+		if (this.attributes[attr + "/set"]) {
+			return this.attributes[attr + "/set"].plc_address;
 		}
 
 		return null;

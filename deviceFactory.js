@@ -1,7 +1,11 @@
 let sf = require('./service_functions.js');
 
 let device = require('./device.js');
+
 let dev_light = require('./devices/light.js');
+let dev_cover = require('./devices/cover.js');
+let dev_sensor = require('./devices/sensor.js');
+let dev_switch = require('./devices/switch.js');
 
 
 module.exports = function deviceFactory(devices, plc, mqtt, config, mqtt_base) {
@@ -41,21 +45,20 @@ module.exports = function deviceFactory(devices, plc, mqtt, config, mqtt_base) {
 			return new dev_light(plc, mqtt, config);
 			break;
 
-    // TODO
 		case "sensor":
-			// return new dev_light(plc, mqtt, config);
-			// break;
+			return new dev_sensor(plc, mqtt, config);
+			break;
 
 		case "switch":
-			// return new dev_light(plc, mqtt, config);
-			// break;
+			return new dev_switch(plc, mqtt, config);
+			break;
 
 		case "cover":
-			// return new dev_light(plc, mqtt, config);
-			// break;
+			return new dev_cover(plc, mqtt, config);
+			break;
 
 		case "climate":
-			// return new dev_light(plc, mqtt, config);
+			// return new dev_climate(plc, mqtt, config);
 			// break;
 
 		default:
