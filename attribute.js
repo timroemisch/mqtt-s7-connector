@@ -5,6 +5,7 @@ module.exports = class attribute {
 		this.plc_handler = plc;
 		this.mqtt_handler = mqtt;
 
+		this.done_writing = true;
 		this.last_update = 0;
 		this.last_value = 0;
 		this.update_interval = 0;
@@ -119,14 +120,28 @@ module.exports = class attribute {
 		}
 	}
 
-	rec_mqtt_data(data) {
+	rec_mqtt_data(data, cb) {
 		// type check
 		let msg = this.formatMessage(data, this.type);
 
+		// if the callback function hasn`t reset "done_writing"
+		if (this.done_writing == false) {
+			sf.debug("Error: The previous writing process isn't finished -> skipping it");
+			return;
+		}
+
 		// no error in formatting
 		if (msg[0] == 0) {
+			let that = this;
+
 			// write to plc
-			this.plc_handler.writeItems(this.full_mqtt_topic, msg[1], sf.plc_response);
+			this.done_writing = false;
+			this.plc_handler.writeItems(this.full_mqtt_topic, msg[1], (error) => {
+				sf.plc_response(error);
+				that.done_writing = true;
+
+				if (cb) cb(error);
+			});
 		}
 	}
 

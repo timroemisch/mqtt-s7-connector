@@ -110,9 +110,7 @@ module.exports = class device {
 		if (this.attributes[attr]) {
 
 			// forward all data to attribute
-			this.attributes[attr].rec_mqtt_data(data);
-
-			if (cb) cb(attr, data);
+			this.attributes[attr].rec_mqtt_data(data, cb);
 		}
 	}
 

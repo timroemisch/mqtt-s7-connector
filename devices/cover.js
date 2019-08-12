@@ -72,25 +72,21 @@ module.exports = class devCover extends device {
 
 	rec_mqtt_data(attr, data) {
 
-		// TODO: make it better
-
 		// call parent class method
-		super.rec_mqtt_data(attr, data, (attr, data) => {
-			// callback function
+		super.rec_mqtt_data(attr, data, (error) => {
+			// callback function of attribute when write was finished
 
 			// if the trigger attr is defined
 			if (this.attributes["trigger"]) {
 
 				// send impulse
-				this.attributes["trigger"].rec_mqtt_data("true");
-				setTimeout(() => {
+				this.attributes["trigger"].rec_mqtt_data("true", () => {
 					this.attributes["trigger"].rec_mqtt_data("false");
-				}, 500);
+				});
 
 			}
 
 		});
 	}
-
 
 }
