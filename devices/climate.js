@@ -8,21 +8,25 @@ module.exports = class devLight extends device {
 		// add attributes spezific for a light
 		// create attribute from config
 
-		// binary on/off state ->  power_command_topic ->
+		// binary on/off state ->  power_command_topic
 		if (config.state) {
 			this.create_attribute(config.state, "X", "state");
 		}
 
-		// current temperature ->
+		// current temperature
 		if (config.current_temperature) {
 			this.create_attribute(config.current_temperature, "REAL", "current_temperature");
-			this.attributes["current_temperature"].setRW("r");
+			this.attributes["current_temperature"].set_RW("r");
+
+			// if no update interval is defined, set it to 15 min
+			if (this.attributes["current_temperature"].update_interval == 0)
+				this.attributes["current_temperature"].update_interval = 900000; // 15 min
 		}
 
 		// target temperature
 		if (config.target_temperature) {
 			this.create_attribute(config.target_temperature, "REAL", "target_temperature");
-			this.attributes["target_temperature"].setRW("w");
+			this.attributes["target_temperature"].set_RW("w");
 		}
 
 		// Features for Future ...

@@ -18,7 +18,7 @@ module.exports = class device {
 		this.full_mqtt_topic = config.mqtt_base + "/" + this.mqtt_name;
 
 		// store all attribute objects in this array
-		this.attributes = [];
+		this.attributes = {};
 	}
 
 	create_attribute(config, required_type, name) {
@@ -52,14 +52,14 @@ module.exports = class device {
 				new_attribute.unit_of_measurement = config.unit_of_measurement;
 
 		} else {
-			plc_address = config;
+			new_attribute.plc_address = config;
 		}
 
 		// register the attribute to the plc library
 		new_attribute.subscribePlcUpdates();
 
 		// split the plc adress to get the type
-		let offset = plc_address.split(',');
+		let offset = new_attribute.plc_address.split(',');
 		let params = offset[1].match(/(\d+|\D+)/g);
 		let type = params[0];
 
@@ -75,7 +75,7 @@ module.exports = class device {
 
 			sf.debug("Did you mean " + offset[0] + "," +
 				required_type + numbers +
-				" instead of " + plc_address + " ?");
+				" instead of " + new_attribute.plc_address + " ?");
 
 			return;
 		}

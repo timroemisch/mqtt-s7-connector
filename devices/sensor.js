@@ -12,7 +12,7 @@ module.exports = class devSensor extends device {
 		if (config.state) {
 			// allow all supported types
 			this.create_attribute(config.state, "", "state");
-			attributes["state"].setRW("r"); // readonly
+			this.attributes["state"].set_RW("r"); // readonly
 		}
 	}
 
@@ -24,8 +24,8 @@ module.exports = class devSensor extends device {
 		if (this.attributes["state"]) {
 			info.state_topic = this.attributes["state"].full_mqtt_topic;
 
-			if (this.attribute["state"].unit_of_measurement) {
-				info.unit_of_measurement = this.attribute["state"].unit_of_measurement;
+			if (this.attributes["state"].unit_of_measurement) {
+				info.unit_of_measurement = this.attributes["state"].unit_of_measurement;
 			}
 		}
 

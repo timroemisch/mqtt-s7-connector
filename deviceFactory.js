@@ -6,6 +6,7 @@ let dev_light = require('./devices/light.js');
 let dev_cover = require('./devices/cover.js');
 let dev_sensor = require('./devices/sensor.js');
 let dev_switch = require('./devices/switch.js');
+let dev_climate = require('./devices/climate.js');
 
 
 module.exports = function deviceFactory(devices, plc, mqtt, config, mqtt_base) {
@@ -58,8 +59,8 @@ module.exports = function deviceFactory(devices, plc, mqtt, config, mqtt_base) {
 			break;
 
 		case "climate":
-			// return new dev_climate(plc, mqtt, config);
-			// break;
+			return new dev_climate(plc, mqtt, config);
+			break;
 
 		default:
 			sf.debug("Unknown device type '" + type + "'");

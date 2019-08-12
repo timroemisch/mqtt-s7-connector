@@ -26,7 +26,7 @@
   },
 
   "devices": [{
-      "name": "Licht",
+      "name": "Dimmable Light",
       "type": "light",
 
       "state": "DB56,X150.0",
@@ -34,13 +34,58 @@
 
     },
     {
-      "name": "Licht 1",
+      "name": "Light",
       "type": "light",
 
       "state": "DB56,X150.0"
     },
     {
-      "name": "Licht",
+      "name": "Climate",
+      "type": "climate",
+
+      "state": "DB56,X150.0",
+      "current_temperature": "DB51,REAL216",
+      "target_temperature": "DB56,REAL6"
+    },
+    {
+      "name": "Cover",
+      "type": "cover",
+
+      "targetPosition": "DB56,BYTE39",
+      "currentPosition": "DB35,BYTE274",
+      "currentTiltAngle": "DB35,BYTE275",
+      "tiltAngle": "DB56,BYTE40",
+      "trigger": "DB56,X41.0"
+    },
+    {
+      "name": "Binary Sensor",
+      "type": "sensor",
+
+      "state": "DB56,X150.0"
+    },
+    {
+      "name": "Number Sensor",
+      "type": "sensor",
+
+      "state": "DB56,BYTE39"
+    },
+    {
+      "name": "Floating Point Sensor",
+      "type": "sensor",
+
+      "state": "DB51,REAL216"
+    },
+    {
+      "name": "Switch",
+      "type": "switch",
+
+      "state": "DB56,X150.0"
+    },
+
+
+
+    {
+      "name": "Light Readonly Interval",
       "type": "light",
 
       "state": {
@@ -49,14 +94,53 @@
         "update_interval": 5000
       }
     },
+
     {
-      "type": "light",
+      "name": "Switch Writeonly",
+      "type": "switch",
+
+      "state": {
+        "plc": "DB56,X150.0",
+        "rw": "w"
+      }
+    },
+
+    {
+      "name": "Userdefined mqtt topic name",
+      "type": "sensor",
+      "mqtt": "outside-sensor",
+
       "state": "DB56,X150.0"
     },
+
     {
-      "type": "light",
-      "state": "DB56,X150.0",
-      "mqtt": "light2"
+      "name": "Sensor with unit of measurement",
+      "type": "sensor",
+
+      "state": {
+        "plc": "DB56,X150.0",
+        "unit_of_measurement": "km/h"
+      }
+    },
+
+    {
+      "name": "Sensor with unit of measurement",
+      "type": "sensor",
+
+      "state": {
+        "plc": "DB56,X150.0",
+        "unit_of_measurement": "km/h"
+      }
+    },
+
+    {
+      "name": "Switch with different RW address",
+      "type": "switch",
+
+      "state": {
+        "plc": "DB56,X150.0",
+        "set_plc": "DB56,X150.1"
+      }
     }
   ]
 
