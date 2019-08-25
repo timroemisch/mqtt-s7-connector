@@ -192,12 +192,13 @@ __Available options:__
 
 * rw
 > Changes the read / write permissions  
+
 |    | Read PLC | Write PLC | Subscribe MQTT | Publish MQTT |
 |----|----------|-----------|----------------|--------------|
 | r  | ✅       | ❌        | ❌            | ✅            |
 | w  | ❌       | ✅        | ✅            | ❌            |
 | rw | ✅       | ✅        | ✅            | ✅            |
->
+
 ```
 "state": {
     "plc": "DB56,X150.0",
