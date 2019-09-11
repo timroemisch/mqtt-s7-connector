@@ -20,7 +20,7 @@ npm install -g https://github.com/timroemisch/mqtt-s7-connector
 ```
 docker run -d -v /path/on/host/config.json:/usr/src/app/config.json timroemisch/mqtt-s7-connector
 ```
-Note: You have to mount only the configuration file, not the entire folder.  
+Note: You only have to mount the configuration file, not the entire folder.  
 Config volume mountpoint: ```/usr/src/app/config.json```
 
 ## Config File
