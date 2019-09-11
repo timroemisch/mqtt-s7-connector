@@ -15,8 +15,13 @@ This tool can receive data over mqtt and can write it to a designated address on
 npm install -g https://github.com/timroemisch/mqtt-s7-connector
 ```
 
-#### With docker (todo):
+#### With docker:
 
+```
+docker run -d -v /path/on/host/config.json:/usr/src/app/config.json timroemisch/mqtt-s7-connector
+```
+Note: You have to mount only the configuration file, not the entire folder.  
+Config volume mountpoint: ```/usr/src/app/config.json```
 
 ## Config File
 

@@ -21,7 +21,7 @@ function init() {
 		// set default config values if they arent set
 		config.debug_level = config.debug_level || 2;
 
-		config.update_time = config.update_time || 10000;
+		config.update_time = config.update_time || 1000;
 		config.temperature_interval = config.temperature_interval || 900000;
 
 		config.mqtt_base = config.mqtt_base || "s7";
@@ -64,7 +64,7 @@ function init() {
 		// start loop
 		setInterval(() => {
 			plc_update_loop();
-		}, config.updateTime);
+		}, config.update_time);
 
 		// discovery broadcast loop
 		setInterval(() => {

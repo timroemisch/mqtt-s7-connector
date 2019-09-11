@@ -26,6 +26,9 @@ module.exports = class attribute {
 		// plc type e.g. X, BYTE
 		this.type = type;
 
+		// TODO
+		this.round_value = true;
+
 		// attribute name (last part in topic)
 		this.name = name;
 
@@ -44,11 +47,30 @@ module.exports = class attribute {
 	// every attribute as to add it self to the plc_handler
 	// so that it can be updated from the plc
 	subscribePlcUpdates() {
-		if (this.plc_address)
+		if (this.plc_address) {
 			this.plc_handler.addItems(this.full_mqtt_topic);
 
-		if (this.plc_set_address)
+			// if no type is defined
+			// try to get it from the adress
+			if (this.type == "") {
+
+				let tmp = /,([A-Z]*)/g.exec(this.plc_address);
+				this.type = tmp[1];
+			}
+		}
+
+		if (this.plc_set_address) {
 			this.plc_handler.addItems(this.full_mqtt_topic + "/set");
+
+			// get type from address
+			let tmp = /,([A-Z]*)/g.exec(this.plc_set_address);
+
+			// and check if the
+			if (tmp[1] != this.type) {
+				sf.error("Error: the plc_set_address has to have the same type as the plc_address !");
+			}
+		}
+
 	}
 
 	set_RW(data) {
@@ -95,6 +117,11 @@ module.exports = class attribute {
 
 	rec_s7_data(data) {
 		if (this.publish_to_mqtt) {
+
+			// round all floating point values up to 3 decimal places
+			if (this.type == "REAL" && this.round_value) {
+				data = Math.round(data * 1000) / 1000;
+			}
 
 			const now = Date.now();
 
