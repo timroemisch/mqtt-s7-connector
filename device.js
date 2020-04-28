@@ -91,6 +91,8 @@ module.exports = class device {
 		let topic = this.discovery_topic + "/" +
 			this.type + "/s7-connector/" + this.mqtt_name + "/config";
 
+		info.uniq_id = 's7-' + this.mqtt_name;
+
 		this.mqtt_handler.publish(topic, JSON.stringify(info), {
 			retain: this.discovery_retain
 		});
