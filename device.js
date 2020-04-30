@@ -47,6 +47,10 @@ module.exports = class device {
 			if (config.update_interval)
 				new_attribute.update_interval = config.update_interval;
 
+			// optional inverted, works only with booleans
+			if (config.inverted)
+				new_attribute.boolean_inverted = config.inverted;
+
 			// optional unit_of_measurement only for homeassistant
 			if (config.unit_of_measurement)
 				new_attribute.unit_of_measurement = config.unit_of_measurement;

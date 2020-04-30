@@ -32,6 +32,10 @@ module.exports = class attribute {
 		// attribute name (last part in topic)
 		this.name = name;
 
+		// works only with booleans
+		// send inverted value to mqtt
+		this.boolean_inverted = false;
+
 		// full topic
 		this.full_mqtt_topic = mqtt_device_topic + "/" + this.name;
 
@@ -121,6 +125,10 @@ module.exports = class attribute {
 			// round all floating point values up to 3 decimal places
 			if (this.type == "REAL" && this.round_value) {
 				data = Math.round(data * 1000) / 1000;
+			}
+
+			if (this.type == "X" && this.boolean_inverted) {
+				data = !data;
 			}
 
 			const now = Date.now();
