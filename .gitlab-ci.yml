@@ -1,3 +1,8 @@
+    
+stages:
+  - build
+  - build-rpi
+
 build:
   image: alpine:latest
   stage: build
@@ -5,12 +10,10 @@ build:
     - docker
     - tim
     - amd
-  variables:
-    IMAGE_TAG: $CI_REGISTRY_IMAGE:amd
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $IMAGE_TAG .
-    - docker push $IMAGE_TAG
+    - docker build -t $CI_REGISTRY_IMAGE:amd .
+    - docker push $CI_REGISTRY_IMAGE:amd
 
 build-rpi:
   image: alpine:latest
@@ -19,9 +22,11 @@ build-rpi:
     - docker
     - tim
     - rpi
-  variables:
-    IMAGE_TAG: $CI_REGISTRY_IMAGE:rpi
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $IMAGE_TAG .
-    - docker push $IMAGE_TAG
+    - docker build -t $CI_REGISTRY_IMAGE:rpi .
+    - docker push $CI_REGISTRY_IMAGE:rpi
+    
+
+
+
