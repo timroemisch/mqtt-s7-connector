@@ -15,8 +15,8 @@ var setup = function(config, finished) {
 	plc.initiateConnection({
 		port: config.port,
 		host: config.host,
-		rack: config.rack,
-		slot: config.slot,
+		localTSAP: config.localTSAP,
+		remoteTSAP: config.remoteTSAP
 	}, PLCconnected);
 
 	function PLCconnected(err) {
