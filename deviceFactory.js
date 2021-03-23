@@ -7,7 +7,7 @@ let dev_cover = require('./devices/cover.js');
 let dev_sensor = require('./devices/sensor.js');
 let dev_switch = require('./devices/switch.js');
 let dev_climate = require('./devices/climate.js');
-
+let dev_garage = require('./devices/garage.js');
 
 module.exports = function deviceFactory(devices, plc, mqtt, config, mqtt_base) {
 	let type = config.type.toLowerCase();
@@ -61,7 +61,10 @@ module.exports = function deviceFactory(devices, plc, mqtt, config, mqtt_base) {
 		case "climate":
 			return new dev_climate(plc, mqtt, config);
 			break;
-
+			
+		case "garage":
+			return new dev_garage(plc, mqtt, config);
+			break;
 		default:
 			sf.debug("Unknown device type '" + type + "'");
 	}
