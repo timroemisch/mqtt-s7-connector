@@ -122,7 +122,11 @@ module.exports = class device {
 
 	get_plc_address(attr) {
 		if (this.attributes[attr]) {
-			return this.attributes[attr].plc_address;
+			if(this.attributes[attr].plc_set_address) {
+				return this.attributes[attr].plc_set_address;
+			} else {
+				return this.attributes[attr].plc_address;
+			}
 		}
 
 		// optional set address
