@@ -30,7 +30,7 @@ module.exports = class devCover extends device {
 			this.attributes["currentTiltAngle"].set_RW("r"); // read from s7 and publish to mqtt
 		}
 
-		// one bit for triggering each action
+		// this bit will be set after triggering each action
 		if (config.trigger) {
 			this.create_attribute(config.trigger, "X", "trigger");
 			this.attributes["trigger"].set_RW("i"); // internal attribute
