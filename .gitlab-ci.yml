@@ -1,32 +1,26 @@
-    
-stages:
-  - build
-  - build-rpi
-
 build:
-  image: alpine:latest
   stage: build
   tags:
     - docker
-    - tim
     - amd64
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -t $CI_REGISTRY_IMAGE:amd .
     - docker push $CI_REGISTRY_IMAGE:amd
+  only:
+    - master
 
 build-rpi:
-  image: alpine:latest
-  stage: build-rpi
+  stage: build
   tags:
     - docker
-    - tim
     - rpi
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -t $CI_REGISTRY_IMAGE:rpi .
     - docker push $CI_REGISTRY_IMAGE:rpi
-    
+  only:
+    - master
 
 
 
