@@ -58,6 +58,19 @@
       "trigger": "DB56,X41.0"
     },
     {
+      "name": "Binary Cover",
+      "type": "binarycover",
+
+      "currentPosition": "DB56,X0.3",
+      "targetPosition": "DB56,X0.1"
+    },
+    {
+      "name": "Garage",
+      "type": "binarycover",
+
+      "currentPosition": "DB56,X0.3",
+    },
+    {
       "name": "Binary Sensor",
       "type": "sensor",
 

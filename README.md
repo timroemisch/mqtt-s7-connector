@@ -10,13 +10,6 @@ This tool can receive data over mqtt and can write it to a designated address on
 
 ## How to install
 
-#### With NPM:
-```
-npm install -g https://github.com/timroemisch/mqtt-s7-connector
-```
-
-#### With docker:
-
 ```
 docker run -d -v /path/on/host/config.json:/usr/src/app/config.json timroemisch/mqtt-s7-connector
 ```
@@ -27,7 +20,6 @@ Config volume mountpoint: ```/usr/src/app/config.json```
 
 The configuration file has to be located in the same directory as the installation and has to be named ```config.json```  
 
-e.g. NPM global installation path: ```/usr/lib/node_modules/s7-mqtt-connector/config.json```
 
 __An example of a correct configuration file is found in [```config.example.json```](https://github.com/timroemisch/mqtt-s7-connector/blob/master/config.example.json).__
 
@@ -165,6 +157,13 @@ Current list of supported device types with supported attributes:
   this bit will be turned on and off automatically after one of the other attributes of the cover will be changed
 
 
+* binaryCover
+  * ```targetPosition``` _(X)_  
+
+  * ```currentPosition``` _(X)_  
+  _readonly by default_  
+
+
 ## Attribute Options
 
 A "simple" device has just the plc address as the value of the attributes,  
@@ -267,4 +266,4 @@ Pull requests welcome! 😄
 ## License
 
 [Licensed under ISC](https://github.com/timroemisch/mqtt-s7-connector/blob/master/LICENSE)  
-Copyright (c) 2019 Tim Römisch
+Copyright (c) 2021 Tim Römisch
