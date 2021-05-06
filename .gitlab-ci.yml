@@ -8,7 +8,7 @@ build:
     - docker build -t $CI_REGISTRY_IMAGE:latest .
     - docker push $CI_REGISTRY_IMAGE:latest
 
-    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD
+    - docker login -u '$DOCKERHUB_USER' -p '$DOCKERHUB_PASSWORD'
     - docker tag $CI_REGISTRY_IMAGE:latest timroemisch/mqtt-s7-connector:latest
     - docker push timroemisch/mqtt-s7-connector:latest
   only:
@@ -24,7 +24,7 @@ build-rpi:
     - docker build -t $CI_REGISTRY_IMAGE:rpi .
     - docker push $CI_REGISTRY_IMAGE:rpi
 
-    - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD
+    - docker login -u '$DOCKERHUB_USER' -p '$DOCKERHUB_PASSWORD'
     - docker tag $CI_REGISTRY_IMAGE:rpi timroemisch/mqtt-s7-connector:rpi
     - docker push timroemisch/mqtt-s7-connector:rpi
   only:
