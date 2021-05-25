@@ -53,28 +53,7 @@ module.exports = class attribute {
 	subscribePlcUpdates() {
 		if (this.plc_address) {
 			this.plc_handler.addItems(this.full_mqtt_topic);
-
-			// if no type is defined
-			// try to get it from the adress
-			if (this.type == "") {
-
-				let tmp = /,([A-Z]*)/g.exec(this.plc_address);
-				this.type = tmp[1];
-			}
 		}
-
-		if (this.plc_set_address) {
-			this.plc_handler.addItems(this.full_mqtt_topic + "/set");
-
-			// get type from address
-			let tmp = /,([A-Z]*)/g.exec(this.plc_set_address);
-
-			// and check if the
-			if (tmp[1] != this.type) {
-				sf.error("Error: the plc_set_address has to have the same type as the plc_address !");
-			}
-		}
-
 	}
 
 	set_RW(data) {
@@ -171,7 +150,7 @@ module.exports = class attribute {
 
 			// write to plc
 			this.done_writing = false;
-			this.plc_handler.writeItems(this.full_mqtt_topic, msg[1], (error) => {
+		this.plc_handler.writeItems(this.full_mqtt_topic + "/set", msg[1], (error) => {
 				sf.plc_response(error);
 				that.done_writing = true;
 
