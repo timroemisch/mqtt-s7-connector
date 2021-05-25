@@ -39,6 +39,9 @@ module.exports = class attribute {
 		// full topic
 		this.full_mqtt_topic = mqtt_device_topic + "/" + this.name;
 
+		// optional write back changes from plc to set_plc
+		this.write_back = false;
+
 		// only subscribe if attribute is allowed to write to plc
 		if (this.write_to_s7) {
 			this.mqtt_handler.subscribe(this.full_mqtt_topic + "/set");
@@ -129,6 +132,14 @@ module.exports = class attribute {
 				this.mqtt_handler.publish(this.full_mqtt_topic, data.toString(), {
 					retain: false
 				});
+
+				if (this.write_back) {
+					this.write_to_plc(data, (error) => {
+							if (error) {
+								sf.debug("Error while writing back: " + error);
+							}
+						});
+				}
 			}
 
 		}
@@ -137,26 +148,32 @@ module.exports = class attribute {
 	rec_mqtt_data(data, cb) {
 		// type check
 		let msg = this.formatMessage(data, this.type);
+		
+		// no error in formatting
+		if (msg[0] == 0) {
+			this.write_to_plc(msg[1], cb);
+		} else {
+			if (cb) cb("Incorrect formating");
+		}
+	}
 
+	write_to_plc(data, cb) {
+		let that = this;
+		
 		// if the callback function hasn`t reset "done_writing"
 		if (this.done_writing == false) {
 			sf.debug("Error: The previous writing process isn't finished -> skipping it");
 			return;
 		}
 
-		// no error in formatting
-		if (msg[0] == 0) {
-			let that = this;
+		// write to plc
+		this.done_writing = false;
+		this.plc_handler.writeItems(this.full_mqtt_topic + "/set", data, (error) => {
+			sf.plc_response(error);
+			that.done_writing = true;
 
-			// write to plc
-			this.done_writing = false;
-		this.plc_handler.writeItems(this.full_mqtt_topic + "/set", msg[1], (error) => {
-				sf.plc_response(error);
-				that.done_writing = true;
-
-				if (cb) cb(error);
-			});
-		}
+			if (cb) cb(error);
+		});
 	}
 
 

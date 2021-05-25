@@ -55,6 +55,9 @@ module.exports = class device {
 			if (config.unit_of_measurement)
 				new_attribute.unit_of_measurement = config.unit_of_measurement;
 
+			// optional write back changes from plc to set_plc
+			if (config.write_back)
+				new_attribute.write_back = config.write_back;
 		} else {
 			new_attribute.plc_address = config;
 		}
