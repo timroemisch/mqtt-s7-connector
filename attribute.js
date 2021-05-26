@@ -5,7 +5,6 @@ module.exports = class attribute {
 		this.plc_handler = plc;
 		this.mqtt_handler = mqtt;
 
-		this.done_writing = true;
 		this.last_update = 0;
 		this.last_value = 0;
 		this.update_interval = 0;
@@ -159,18 +158,10 @@ module.exports = class attribute {
 
 	write_to_plc(data, cb) {
 		let that = this;
-		
-		// if the callback function hasn`t reset "done_writing"
-		if (this.done_writing == false) {
-			sf.debug("Error: The previous writing process isn't finished -> skipping it");
-			return;
-		}
 
 		// write to plc
-		this.done_writing = false;
 		this.plc_handler.writeItems(this.full_mqtt_topic + "/set", data, (error) => {
 			sf.plc_response(error);
-			that.done_writing = true;
 
 			if (cb) cb(error);
 		});
