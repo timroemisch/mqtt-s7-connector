@@ -35,7 +35,11 @@ function init() {
 			let topic_parts = topic.split('/');
 
 			// call correct device and ask for address from attribute
-			return devices[topic_parts[1]].get_plc_address(topic_parts[2]);
+			if (topic_parts[3] == "set") {
+				return devices[topic_parts[1]].get_plc_set_address(topic_parts[2]);
+			} else {
+				return devices[topic_parts[1]].get_plc_address(topic_parts[2]);
+			}
 		});
 
 		// parse config and create devices

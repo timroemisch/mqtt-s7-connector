@@ -5,7 +5,6 @@ module.exports = class attribute {
 		this.plc_handler = plc;
 		this.mqtt_handler = mqtt;
 
-		this.done_writing = true;
 		this.last_update = 0;
 		this.last_value = 0;
 		this.update_interval = 0;
@@ -39,6 +38,9 @@ module.exports = class attribute {
 		// full topic
 		this.full_mqtt_topic = mqtt_device_topic + "/" + this.name;
 
+		// optional write back changes from plc to set_plc
+		this.write_back = false;
+
 		// only subscribe if attribute is allowed to write to plc
 		if (this.write_to_s7) {
 			this.mqtt_handler.subscribe(this.full_mqtt_topic + "/set");
@@ -53,28 +55,7 @@ module.exports = class attribute {
 	subscribePlcUpdates() {
 		if (this.plc_address) {
 			this.plc_handler.addItems(this.full_mqtt_topic);
-
-			// if no type is defined
-			// try to get it from the adress
-			if (this.type == "") {
-
-				let tmp = /,([A-Z]*)/g.exec(this.plc_address);
-				this.type = tmp[1];
-			}
 		}
-
-		if (this.plc_set_address) {
-			this.plc_handler.addItems(this.full_mqtt_topic + "/set");
-
-			// get type from address
-			let tmp = /,([A-Z]*)/g.exec(this.plc_set_address);
-
-			// and check if the
-			if (tmp[1] != this.type) {
-				sf.error("Error: the plc_set_address has to have the same type as the plc_address !");
-			}
-		}
-
 	}
 
 	set_RW(data) {
@@ -150,6 +131,20 @@ module.exports = class attribute {
 				this.mqtt_handler.publish(this.full_mqtt_topic, data.toString(), {
 					retain: false
 				});
+
+				if (this.write_back) {
+					if (data == this.last_set_data) {
+						// This change was triggered by ourself. Skipping and reseting.
+						this.last_set_data = undefined;
+					} else {
+						// Writing back the change to the S7 input.
+						this.write_to_plc(data, (error) => {
+								if (error) {
+									sf.debug("Error while writing back: " + error);
+								}
+							});
+					}
+				}
 			}
 
 		}
@@ -158,26 +153,25 @@ module.exports = class attribute {
 	rec_mqtt_data(data, cb) {
 		// type check
 		let msg = this.formatMessage(data, this.type);
-
-		// if the callback function hasn`t reset "done_writing"
-		if (this.done_writing == false) {
-			sf.debug("Error: The previous writing process isn't finished -> skipping it");
-			return;
-		}
-
+		
 		// no error in formatting
 		if (msg[0] == 0) {
-			let that = this;
-
-			// write to plc
-			this.done_writing = false;
-			this.plc_handler.writeItems(this.full_mqtt_topic, msg[1], (error) => {
-				sf.plc_response(error);
-				that.done_writing = true;
-
-				if (cb) cb(error);
-			});
+			this.write_to_plc(msg[1], cb);
+		} else {
+			if (cb) cb("Incorrect formating");
 		}
+	}
+
+	write_to_plc(data, cb) {
+		let that = this;
+		this.last_set_data = data;
+
+		// write to plc
+		this.plc_handler.writeItems(this.full_mqtt_topic + "/set", data, (error) => {
+			sf.plc_response(error);
+
+			if (cb) cb(error);
+		});
 	}
 
 

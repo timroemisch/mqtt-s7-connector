@@ -242,6 +242,17 @@ __Available options:__
 },
 ```
 
+* write_back
+> When using both `plc_address` and `plc_set_address`, setting `write_back` to `true`
+> will automatically write any changes read from `plc_address` to `plc_set_address`.
+>
+```
+"state": {
+    "plc": "DB56,X150.0",
+    "set_plc": "DB56,X150.1",
+    "write_back": true
+},
+```
 
 ## Auto Discovery
 This tool will send for each device an auto-discovery message over mqtt in the correct format defined by Home Assistant.  

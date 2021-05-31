@@ -55,6 +55,9 @@ module.exports = class device {
 			if (config.unit_of_measurement)
 				new_attribute.unit_of_measurement = config.unit_of_measurement;
 
+			// optional write back changes from plc to set_plc
+			if (config.write_back)
+				new_attribute.write_back = config.write_back;
 		} else {
 			new_attribute.plc_address = config;
 		}
@@ -82,6 +85,8 @@ module.exports = class device {
 				" instead of " + new_attribute.plc_address + " ?");
 
 			return;
+		} else {
+			new_attribute.type = type;
 		}
 
 		sf.debug("- New attribute '" + new_attribute.full_mqtt_topic + "' was created");
@@ -121,17 +126,20 @@ module.exports = class device {
 	}
 
 	get_plc_address(attr) {
-		if (this.attributes[attr]) {
-			if(this.attributes[attr].plc_set_address) {
-				return this.attributes[attr].plc_set_address;
-			} else {
-				return this.attributes[attr].plc_address;
-			}
+		if (this.attributes[attr] && this.attributes[attr].plc_address) {
+			return this.attributes[attr].plc_address;
 		}
 
-		// optional set address
-		if (this.attributes[attr + "/set"]) {
-			return this.attributes[attr + "/set"].plc_address;
+		return null;
+	}
+
+	get_plc_set_address(attr) {
+		if (this.attributes[attr]) {
+			if (this.attributes[attr].plc_set_address) {
+				return this.attributes[attr].plc_set_address;
+			} else if (this.attributes[attr].plc_address) {
+				return this.attributes[attr].plc_address;
+			}
 		}
 
 		return null;

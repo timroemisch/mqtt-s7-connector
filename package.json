@@ -20,7 +20,8 @@
   },
   "author": "timroemisch https://github.com/timroemisch",
   "contributors": [
-    "sparkie79 https://github.com/sparkie79/"
+    "sparkie79 https://github.com/sparkie79/",
+    "lsibilla https://github.com/lsibilla"
   ],
   "repository": {
     "type": "git",
@@ -28,6 +29,7 @@
   },
   "license": "ISC",
   "dependencies": {
+    "fastq": "^1.11.0",
     "mqtt": "^3.0.0",
     "nodes7": "^0.3.12"
   }
