@@ -133,11 +133,17 @@ module.exports = class attribute {
 				});
 
 				if (this.write_back) {
-					this.write_to_plc(data, (error) => {
-							if (error) {
-								sf.debug("Error while writing back: " + error);
-							}
-						});
+					if (data == this.last_set_data) {
+						// This change was triggered by ourself. Skipping and reseting.
+						this.last_set_data = undefined;
+					} else {
+						// Writing back the change to the S7 input.
+						this.write_to_plc(data, (error) => {
+								if (error) {
+									sf.debug("Error while writing back: " + error);
+								}
+							});
+					}
 				}
 			}
 
@@ -158,6 +164,7 @@ module.exports = class attribute {
 
 	write_to_plc(data, cb) {
 		let that = this;
+		this.last_set_data = data;
 
 		// write to plc
 		this.plc_handler.writeItems(this.full_mqtt_topic + "/set", data, (error) => {
