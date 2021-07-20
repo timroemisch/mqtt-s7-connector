@@ -30,7 +30,7 @@
   "license": "ISC",
   "dependencies": {
     "fastq": "^1.11.0",
-    "mqtt": "^3.0.0",
+    "mqtt": "^4.2.8",
     "nodes7": "^0.3.12"
   }
 }
