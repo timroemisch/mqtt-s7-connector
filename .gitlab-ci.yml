@@ -1,43 +1,56 @@
-build:
-  stage: build
-  tags:
-    - docker
-    - amd64
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $CI_REGISTRY_IMAGE:latest .
-    - docker push $CI_REGISTRY_IMAGE:latest
+stages:
+  - build
+  - push
 
-    - docker login -u "$DOCKERHUB_USER" -p "$DOCKERHUB_PASSWORD"
-    - docker tag $CI_REGISTRY_IMAGE:latest timroemisch/mqtt-s7-connector:latest
-    - docker push timroemisch/mqtt-s7-connector:latest
+build:master:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  only:
+    - master
+  script:
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --no-push --destination $CI_REGISTRY_IMAGE:latest --tarPath image.tar
+  artifacts:
+    paths:
+      - image.tar
+    when: on_success
+
+push:vcs:
+  stage: push
+  image:
+    name: gcr.io/go-containerregistry/crane:debug
+    entrypoint: [""]
+  script:
+    - crane auth login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - crane push image.tar $CI_REGISTRY_IMAGE:latest
+  needs:
+    - build:master
   only:
     - master
 
-build-rpi:
-  stage: build
-  tags:
-    - docker
-    - rpi
+push:docker-hub:
+  stage: push
+  image:
+    name: gcr.io/go-containerregistry/crane:debug
+    entrypoint: [""]
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $CI_REGISTRY_IMAGE:rpi .
-    - docker push $CI_REGISTRY_IMAGE:rpi
-
-    - docker login -u "$DOCKERHUB_USER" -p "$DOCKERHUB_PASSWORD"
-    - docker tag $CI_REGISTRY_IMAGE:rpi timroemisch/mqtt-s7-connector:rpi
-    - docker push timroemisch/mqtt-s7-connector:rpi
+    - crane auth login -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD registry.hub.docker.com
+    - crane push image.tar registry.hub.docker.com/timroemisch/mqtt-s7-connector:latest
+  needs:
+    - build:master
   only:
     - master
 
-dev-build:
+build:dev:
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
   stage: build
-  tags:
-    - docker
-    - amd64
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $CI_REGISTRY_IMAGE:dev-$CI_COMMIT_REF_SLUG .
-    - docker push $CI_REGISTRY_IMAGE:dev-$CI_COMMIT_REF_SLUG
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\", \"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE:dev-$CI_COMMIT_REF_SLUG
   except:
     - master
+
