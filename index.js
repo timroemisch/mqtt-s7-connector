@@ -72,9 +72,9 @@ function init() {
 
 		// discovery broadcast loop
 		setInterval(() => {
-			devices.forEach((dev) => {
-				dev.send_discover_msg();
-			});
+			for (let dev in devices) {
+				devices[dev].send_discover_msg();
+			}
 		}, 300000); // 5 min
 
 	} else {
