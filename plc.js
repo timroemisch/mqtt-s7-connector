@@ -32,8 +32,8 @@ var setup = function(config, callback) {
 	plc.initiateConnection({
 		port: config.port,
 		host: config.host,
-		localTSAP: config.localTSAP,
-		remoteTSAP: config.remoteTSAP
+		rack: config.rack,
+		slot: config.slot
 	}, function (err) {
 			if (err !== undefined) {
 				console.log("We have an error. Maybe the PLC is not reachable.");

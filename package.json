@@ -1,6 +1,6 @@
 {
   "name": "s7-mqtt-connector",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Connect Siemens S7 to Mqtt with Homeassistant discovery support",
   "keywords": [
     "mqtt",
@@ -32,6 +32,6 @@
   "dependencies": {
     "fastq": "^1.11.0",
     "mqtt": "^4.2.8",
-    "nodes7": "^0.3.12"
+    "nodes7": "^0.3.18"
   }
 }
