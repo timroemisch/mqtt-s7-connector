@@ -79,7 +79,7 @@ function init() {
 
 	} else {
 		setTimeout(() => {
-			if (!mqtt_handler.isConnected() || !plc_handler.isConnected()) {
+			if (!mqtt_handler.isConnected() || !plc_handler.isConnected()) {
 				sf.error("Connection Timeout");
 			}
 		}, 5000)

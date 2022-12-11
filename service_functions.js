@@ -4,8 +4,8 @@ module.exports.debug = function debug(msg, level = 0) {
 }
 
 module.exports.error = function error(msg) {
-  throw new Error(msg);
-  process.exit(-1);
+	throw new Error(msg);
+	process.exit(-1);
 }
 
 module.exports.plc_response = function plc_response(err) {

@@ -139,10 +139,10 @@ module.exports = class attribute {
 					} else {
 						// Writing back the change to the S7 input.
 						this.write_to_plc(data, (error) => {
-								if (error) {
-									sf.debug("Error while writing back: " + error);
-								}
-							});
+							if (error) {
+								sf.debug("Error while writing back: " + error);
+							}
+						});
 					}
 				}
 			}
@@ -153,7 +153,7 @@ module.exports = class attribute {
 	rec_mqtt_data(data, cb) {
 		// type check
 		let msg = this.formatMessage(data, this.type);
-		
+
 		// no error in formatting
 		if (msg[0] == 0) {
 			this.write_to_plc(msg[1], cb);

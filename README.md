@@ -1,5 +1,5 @@
 # mqtt-s7-connector
-This is an [Node.js](http://nodejs.org/) tool to connect a Siemens S7 PLC over Mqtt with [Home Assistant](https://github.com/home-assistant/home-assistant)
+This is a [Node.js](http://nodejs.org/) tool to connect a Siemens S7 PLC over Mqtt with [Home Assistant](https://github.com/home-assistant/home-assistant)
 
 This project is intended to use along with [Home Assistant](https://github.com/home-assistant/home-assistant), but is also possible to use it as a simple bridge between s7 and mqtt.
 
