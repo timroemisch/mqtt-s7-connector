@@ -5,6 +5,7 @@ module.exports = class attribute {
 		this.plc_handler = plc;
 		this.mqtt_handler = mqtt;
 
+		this.first_time = true;
 		this.last_update = 0;
 		this.last_value = 0;
 		this.update_interval = 0;
@@ -120,6 +121,12 @@ module.exports = class attribute {
 
 			// last_value / last_update update
 			if (data != this.last_value && this.update_interval == 0) {
+				should_update = true;
+			}
+
+			// send data anyway if its the first time
+			if (this.first_time) {
+				this.first_time = false;
 				should_update = true;
 			}
 
