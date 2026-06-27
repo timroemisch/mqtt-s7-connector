@@ -21,7 +21,7 @@ module.exports = function deviceFactory(devices, plc, mqtt, config, mqtt_base) {
 	if (config.mqtt) {
 		mqtt_name = config.mqtt;
 	} else {
-		mqtt_name = name.toLowerCase().split(' ').join('-').split('/').join('-');
+		mqtt_name = name.toLowerCase().split(' ').join('-').split('/').join('-').split('(').join('-').split(')').join('-');
 	}
 
 	// check if the spot in the array is already occupied
