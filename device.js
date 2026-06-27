@@ -66,9 +66,28 @@ module.exports = class device {
 		new_attribute.subscribePlcUpdates();
 
 		// split the plc adress to get the type
-		let offset = new_attribute.plc_address.split(',');
-		let params = offset[1].match(/(\d+|\D+)/g);
-		let type = params[0];
+		let DB_address_split = new_attribute.plc_address.match(/^DB\d+,([A-Z]+)\d+(?:\.[0-7]+)?$/g);
+		let M_address_split = new_attribute.plc_address.match(/^M\d+\.\d+(?:\.[0-7]+)?$/g);
+
+		let type = "";
+		let params = null;
+		let offset = null;
+
+		// found a DB address
+		if (DB_address_split != null) {
+			offset = new_attribute.plc_address.split(',');
+			params = offset[1].match(/(\d+|\D+)/g);
+			type = params[0];
+		}
+
+		// if a merker insted of db is set as plc_address, overwrite type with "X"
+		else if (M_address_split !== null) {
+			type = "X";
+		} else {
+			console.log("Error: unknown type")
+			exit();
+		}
+
 
 		// check if the type is correct
 		// and if it isnt then print some infos
