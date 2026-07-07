@@ -18,6 +18,8 @@ function init() {
 	if (mqtt_handler.isConnected() && plc_handler.isConnected()) {
 		sf.debug("Initialize !");
 
+		devices = [];
+		
 		// set default config values if they arent set
 		config.debug_level = config.debug_level || 2;
 
